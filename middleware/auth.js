@@ -1,18 +1,20 @@
-import { findById } from '../model/usermodel.js';
+import { pool } from '../config/database.js';
 import jwt from 'jsonwebtoken';
 export async function getSessionUser(req) {
   const token = req.cookies.authToken;
-  console.log('Token extracted from cookies:', token);
-
-  if (!token) return null;
-
+  if (!token) {
+    return null;
+  }
   try {
-    // Decode the token payload
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    // Query MongoDB to match the user by the ID saved inside the token
-    const user = await findById(decoded.userId);
-    return user || null; // Returns user object, or null if user was deleted from DB
+const user = await pool.query(
+  'SELECT id, name, email, profileimage FROM users WHERE id = $1',
+  [decoded.userId]
+);    const userData = user.rows[0];
+    if (!userData) {
+      return null;
+    }
+    return userData || null;
   } catch (err) {
     console.error('JWT Verification Failed:', err.message);
     return null;

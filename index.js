@@ -1,5 +1,4 @@
-import dns from 'node:dns';
-dns.setServers(['1.1.1.1', '8.8.8.8']); // Fixes MongoDB Atlas DNS error
+
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import path from 'path';
@@ -15,16 +14,13 @@ import dashboardRoutes from './routes/dashboardroutes.js';
 import userRoutes from './routes/userroutes.js';
 import { notFound } from './controller/pagecontroller.js';
 import errorHandler from './middleware/errorhandler.js';
-import connectdb from './config/database.js';
+import './config/database.js';   // runs the test above
 
 const app = express();
 app.use(cookieParser()); 
 // Database & CORS Setup
-connectdb();
-app.use(cors({
-    origin: 'http://localhost:3001', // Adjust this to your frontend's origin
-    credentials: true, // Allow cookies to be sent
-}));
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+
 
 // View Engine Setup
 app.set('view engine', 'ejs');

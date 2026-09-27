@@ -34,7 +34,6 @@ export async function createUser(req, res) {
       if (req.file) {
       userData.profileImage = `/uploads/${req.file.filename}`;
     }
-    console.log('Received user data:', userData); // Debugging line
     const user = await create(userData);
     
     res.status(201).json({
@@ -68,7 +67,6 @@ export async function signupuser(req, res) {
 
   try {
     const userId = req.params.id;
-    // console.log('Deleting user with ID:', userId); // Debugging line
     await deleteById(userId);
     res.status(200).json({ message: 'User deleted successfully' }); 
   }

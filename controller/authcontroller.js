@@ -10,7 +10,7 @@ export function showSignup(req, res) {
 
 export async function login(req, res) {
   try {
-    const { email, password } = req.body || {};
+    const { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ status: 'fail', message: 'Missing email or password' });
@@ -22,15 +22,10 @@ export async function login(req, res) {
       return res.status(401).json({ status: 'fail', message: 'Invalid email or password' });
     }
 
-    // CRUCIAL CHECK: Make sure your .env variables are actually loading!
-    if (!process.env.JWT_SECRET) {
-      console.error("CRITICAL ERROR: process.env.JWT_SECRET is undefined! Check your dotenv setup.");
-      return res.status(500).json({ status: 'fail', message: 'Server configuration error' });
-    }
 
     // Sign the token
     const token = jwt.sign(
-      { userId: user._id }, 
+      { userId: user.rows[0].id }, 
       process.env.JWT_SECRET, 
       { expiresIn: '1h' }
     );
@@ -44,7 +39,16 @@ export async function login(req, res) {
     });
 
     // Return the response
-    return res.json({ status: 'success', token });
+    return res.status(200).json({ status: 'success',
+      token : token,
+      user:{
+        id :user.rows[0].id,
+        name : user.rows[0].name,
+        email : user.rows[0].email,
+        age : user.rows[0].age,
+        profileImage : user.rows[0].profileimage
+      }
+     });
 
   } catch (err) {
     return res.status(500).json({ status: 'fail', message: err.message });

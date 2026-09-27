@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
-import { response } from 'express';
-
+import {pool} from '../config/database.js';
 // 1. Map Mongoose to your existing database fields
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -44,28 +43,50 @@ export async function findById(id) {
 }
 
 export async function signup(userData) {
+  const { name, email, password, age, profileImage } = userData;
 
- if(!userData.name || !userData.email || !userData.password) {
-    throw new Error('Name, email, and password are required fields.');
+  // ---- Validation (replaces Mongoose schema validation) ----
+  if (!name?.trim() || !email?.trim() || !password) {
+    const err = new Error('Name, email, and password are required.');
+    err.status = 400;
+    throw err;
   }
-  const email = userData.email;
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-return null; // User already exists}
-  }
-  return await User.create(userData);
+
+  const normalizedEmail = email.trim().toLowerCase();
+
+  // ---- Check if user exists (replaces User.findOne) ----
+  const existing = await pool.query(
+    'SELECT id FROM users WHERE email = $1',
+    [normalizedEmail]
+  );
+  if (existing.rows.length > 0) return null;   // email taken
+
+  // ---- Hash password ----
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // ---- Insert user (replaces User.create) ----
+  const result = await pool.query(
+    `INSERT INTO users (name, email, password, age, profileimage)
+     VALUES ($1, $2, $3, $4, $5)
+     RETURNING id, name, email, profileimage`,
+    [name.trim(), normalizedEmail, hashedPassword,age || null, profileImage || null]
+  );
+
+  return result.rows[0];   // the newly created user (no password!)
 }
 
 export async function findByCredentials(email, password) {
 
-  const user = await User.findOne({ email: email});
-  if (!user) {
+  const user =await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+  if(!user.rows[0]) {
     return null;
   }
-  const isMatch = await bcrypt.compare(password, user.password);
+  const isMatch = await bcrypt.compare(password, user.rows[0].password);
   if (!isMatch) {
     return null;
   }
+ 
+console.log('User found:', user.rows[0]); // Debugging line
   return user
 
 }
