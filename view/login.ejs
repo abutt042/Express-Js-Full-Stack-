@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in — Nova Systems</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <main class="auth-page">
+    <div class="auth-glow" aria-hidden="true"></div>
+
+    <div class="auth-panel">
+      <span class="corner tl"></span><span class="corner tr"></span>
+      <span class="corner bl"></span><span class="corner br"></span>
+
+      <a href="/" class="auth-brand">
+        <span class="brand-mark"></span>
+        <span>Nova Systems</span>
+      </a>
+
+      <span class="auth-tag">operator console</span>
+
+      <h1 class="auth-heading">Sign in to Nova</h1>
+      <p class="auth-sub">Access your fleet dashboard and live sensor feeds.</p>
+
+    <form class="auth-form" id="loginForm">
+  <div class="field">
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required autocomplete="email">
+  </div>
+
+  <div class="field">
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required autocomplete="current-password">
+  </div>
+
+  <div class="field-row">
+    <label class="checkbox-field">
+      <input type="checkbox" name="remember">
+      Remember me
+    </label>
+    <a href="/forgot-password" class="link-signal">Forgot password?</a>
+  </div>
+
+  <button type="submit" class="btn btn-primary btn-block" id="loginBtn">Sign in</button>
+</form>
+
+<p class="auth-footer">New to Nova? <a href="/contact">Request access</a></p>
+      <p class="auth-footer">New to Nova? <a href="/contact">Request access</a></p>
+    </div>
+  </main>
+
+
+  <script>
+  const form = document.getElementById('loginForm');
+  const btn  = document.getElementById('loginBtn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (!email || !password) {
+      showError('Please fill in all fields.');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
+
+    try {
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.status === 'success') {
+        window.location.href = '/dashboard';   // ✅ client-side redirect
+      } else {
+        showError(result.message || 'Invalid email or password');
+      }
+    } catch (err) {
+      console.error(err);
+      showError('Network error. Please try again.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Sign in';
+    }
+  });
+
+  function showError(msg) {
+    // remove existing toast
+    document.querySelectorAll('.toast-error').forEach(t => t.remove());
+
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-error';
+    toast.setAttribute('role', 'alert');
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.remove(), 4000);
+  }
+</script>
+</body>
+</html>

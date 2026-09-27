@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Nova Systems</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <div class="grid-overlay" aria-hidden="true"></div>
+<%- include('partials/dash-header') %>
+
+  <main class="dash-main">
+    <section class="page-header">
+      <span class="panel-tag">operator console</span>
+      <h1>Fleet overview</h1>
+      <p class="page-sub">Demo data only — a snapshot of units currently online.</p>
+    </section>
+
+    <section class="stats dash-stats">
+      <div class="stat">
+        <span class="stat-value">24</span>
+        <span class="stat-label">units online</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">3</span>
+        <span class="stat-label">units idle</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">18<span class="stat-unit">ms</span></span>
+        <span class="stat-label">avg latency</span>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="panel">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <span class="panel-tag">warehouse-a</span>
+        <h3>Bay 12 — picker</h3>
+        <p>Status nominal. Last heartbeat 2s ago. Battery 87%.</p>
+      </div>
+
+      <div class="panel">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <span class="panel-tag">yard-west</span>
+        <h3>Hauler-04</h3>
+        <p>En route to dock 3. Load 62%. ETA 4 min.</p>
+      </div>
+
+      <div class="panel">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <span class="panel-tag">field</span>
+        <h3>Scout-11</h3>
+        <p>Idle at waypoint C. Awaiting next task from dispatch.</p>
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>

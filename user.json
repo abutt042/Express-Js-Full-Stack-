@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "John Carter",
+    "email": "john@novasystems.test",
+    "age": 25,
+    "password": "password123"
+  },
+  {
+    "id": 2,
+    "name": "Jane Ortiz",
+    "email": "jane@novasystems.test",
+    "age": 30,
+    "password": "password123"
+  },
+  {
+    "id": 3,
+    "name": "Alex Chen",
+    "email": "alex@novasystems.test",
+    "age": 29,
+    "password": "password123"
+  }
+]

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Users — Nova Systems</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <%- include('partials/dash-header') %>
+
+  <main class="dash-main">
+    <section class="page-header">
+      <span class="panel-tag">directory</span>
+      <h1>Users</h1>
+      <p class="page-sub">All operator accounts currently stored in the system.</p>
+    </section>
+
+    <div class="panel table-panel">
+      <span class="corner tl"></span><span class="corner tr"></span>
+      <span class="corner bl"></span><span class="corner br"></span>
+
+      <!-- Table Header with Create Button -->
+      <div class="table-actions" style="padding: 1.2rem 1.5rem 0.5rem 1.5rem;">
+        <div class="table-actions-left">
+          <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-faint);">
+            <%= users && users.length ? `${users.length} records` : '0 records' %>
+          </span>
+        </div>
+        <div class="table-actions-right">
+          <button class="btn-create" id="openCreateModal">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <line x1="8" y1="2" x2="8" y2="14" />
+              <line x1="2" y1="8" x2="14" y2="8" />
+            </svg>
+            Create User
+          </button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+       <table class="data-table">
+<thead>
+  <tr>
+    <th>#</th>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Age</th>
+    <th style="text-align: center; width: 60px;">Actions</th>
+  </tr>
+</thead>
+<tbody>
+  <% 
+    let userList = users;
+    if (users && !Array.isArray(users)) {
+      userList = [users];
+    }
+  %>
+  <% if (userList && userList.length) { %>
+    <% userList.forEach((user, index) => { %>
+      <tr>
+        <td><%= index + 1 %></td>
+        <td>
+          <div class="avatar-cell">
+            <% if (user.profileImage) { %>
+              <img class="avatar" src="<%= user.profileImage %>" alt="<%= user.name %>">
+            <% } else { %>
+              <span class="avatar-fallback"><%= user.name ? user.name.charAt(0).toUpperCase() : '?' %></span>
+            <% } %>
+            <span><%= user.name %></span>
+          </div>
+        </td>
+        <td><%= user.email %></td>
+        <td><%= user.age %></td>
+      <td style="text-align: center;">
+  <div class="action-btns">
+    <!-- Mail button -->
+    <button 
+      class="mail-btn" 
+      onclick="openMailModal('<%= user.email %>', '<%= user.name %>')"
+      aria-label="Send mail"
+    >
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="4" width="16" height="12" rx="2" />
+        <path d="M2 6l8 6 8-6" />
+      </svg>
+    </button>
+
+    <!-- Delete button (existing) -->
+    <button 
+      class="delete-btn" 
+      onclick="deleteUser('<%= user._id %>')"
+      aria-label="Delete user"
+    >
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 5h12M8 5V4a1 1 0 011-1h2a1 1 0 011 1v1M16 5v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5h12z" />
+        <line x1="8" y1="9" x2="8" y2="14" />
+        <line x1="12" y1="9" x2="12" y2="14" />
+      </svg>
+    </button>
+  </div>
+</td>
+      </tr>
+    <% }) %>
+  <% } else { %>
+    <tr>
+      <td colspan="5" style="text-align: center; color: var(--text-faint); padding: 2rem;">
+        No users found. Create your first user!
+      </td>
+    </tr>
+  <% } %>
+</tbody>
+</table>
+      </div>
+    </div>
+  </main>
+
+
+<!-- ============================================
+SEND MAIL MODAL
+============================================ -->
+<div class="modal-overlay" id="mailModal">
+  <div class="modal" role="dialog" aria-labelledby="mailModalTitle" aria-modal="true">
+    <span class="corner tl"></span>
+    <span class="corner tr"></span>
+    <span class="corner bl"></span>
+    <span class="corner br"></span>
+
+    <div class="modal-header">
+      <div>
+        <h2 id="mailModalTitle">Send Mail</h2>
+        <span class="modal-tag">to operator</span>
+      </div>
+      <button class="modal-close" id="closeMailModal" aria-label="Close modal">✕</button>
+    </div>
+
+    <form class="modal-form" id="sendMailForm">
+      <!-- To (readonly) -->
+      <div class="form-group">
+        <label for="mailTo">To</label>
+        <input type="email" id="mailTo" name="to" readonly>
+      </div>
+
+      <!-- Subject -->
+      <div class="form-group">
+        <label for="mailSubject">Subject</label>
+        <input type="text" id="mailSubject" name="subject" placeholder="Enter subject" required>
+      </div>
+
+      <!-- Body -->
+      <div class="form-group">
+        <label for="mailBody">Message</label>
+        <textarea id="mailBody" name="body" rows="6" placeholder="Write your message..." required></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-cancel" id="cancelMailModal">Cancel</button>
+        <button type="submit" class="btn btn-submit">Send Mail</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+  <!-- ============================================
+  CREATE USER MODAL
+  ============================================ -->
+  <div class="modal-overlay" id="createModal">
+    <div class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+      <span class="corner tl"></span>
+      <span class="corner tr"></span>
+      <span class="corner bl"></span>
+      <span class="corner br"></span>
+
+      <div class="modal-header">
+        <div>
+          <h2 id="modalTitle">Create User</h2>
+          <span class="modal-tag">new operator</span>
+        </div>
+        <button class="modal-close" id="closeModal" aria-label="Close modal">✕</button>
+      </div>
+
+      <form class="modal-form" id="createUserForm" enctype="multipart/form-data">
+     
+
+        <!-- Name Field -->
+        <div class="form-group">
+          <label for="userName">Name</label>
+          <input type="text" id="userName" name="name" placeholder="e.g. John Carter" required autofocus>
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group">
+          <label for="userEmail">Email</label>
+          <input type="email" id="userEmail" name="email" placeholder="john@novasystems.test" required>
+        </div>
+
+        <!-- Age Field -->
+        <div class="form-group">
+          <label for="userAge">Age</label>
+          <input type="number" id="userAge" name="age" placeholder="25" min="18" max="150" required>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <label for="userPassword">Password</label>
+          <input type="password" id="userPassword" name="password" placeholder="••••••••" required>
+          <span class="helper-text">Minimum 8 characters</span>
+        </div>
+ <div class="form-group">
+    <label for="userImage">Profile Image</label>
+    <div class="image-upload-row">
+      <div class="image-preview" id="imagePreview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      </div>
+      <div class="image-input-wrap">
+        <input type="file" id="userImage" name="profileImage" accept="image/*">
+        <span class="helper-text">PNG, JPG or WEBP — max 5MB</span>
+      </div>
+    </div>
+  </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-cancel" id="cancelModal">Cancel</button>
+          <button type="submit" class="btn btn-submit">Create User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================
+  JavaScript
+  ============================================ -->
+  <script>
+ async function deleteUser(id) {
+    try {
+      const response = await fetch(`/user/${id}`, {
+        method: 'DELETE'
+      });
+      const result = await response.json();
+
+      if (response.ok) {
+        alert('User deleted!');
+        window.location.reload();
+      } else {
+        alert('Error: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Network error.');
+    }
+  }
+    
+    
+    (function() {
+      'use strict';
+
+      // Get DOM elements
+      const modal = document.getElementById('createModal');
+      const openBtn = document.getElementById('openCreateModal');
+      const closeBtn = document.getElementById('closeModal');
+      const cancelBtn = document.getElementById('cancelModal');
+      const form = document.getElementById('createUserForm');
+
+      // Open modal
+      function openModal() {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        // Focus the first input
+        setTimeout(() => {
+          document.getElementById('userName').focus();
+        }, 100);
+      }
+  // Close modal
+      function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        form.reset();
+      }
+
+      // Event listeners
+      openBtn.addEventListener('click', openModal);
+
+      closeBtn.addEventListener('click', closeModal);
+      cancelBtn.addEventListener('click', closeModal);
+
+      // Close on overlay click
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+
+      // Close on Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+          closeModal();
+        }
+      });
+      const imageInput = document.getElementById('userImage');
+
+const imagePreview = document.getElementById('imagePreview');
+imageInput.addEventListener('change', function () {
+  const file = this.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+    imagePreview.classList.add('has-image');
+  };
+  reader.readAsDataURL(file);
+});
+
+const mailModal   = document.getElementById('mailModal');
+const mailToInput = document.getElementById('mailTo');
+const mailForm    = document.getElementById('sendMailForm');
+const closeMailBtn = document.getElementById('closeMailModal');
+const cancelMailBtn = document.getElementById('cancelMailModal');
+
+// Open mail modal from the table button
+window.openMailModal = function (email, name) {
+  mailToInput.value = email;              // pre-fill email (readonly)
+  mailModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('mailSubject').focus(), 100);
+};
+
+// Close
+function closeMailModal() {
+  mailModal.classList.remove('active');
+  document.body.style.overflow = '';
+  mailForm.reset();
+}
+
+closeMailBtn.addEventListener('click', closeMailModal);
+cancelMailBtn.addEventListener('click', closeMailModal);
+
+mailModal.addEventListener('click', (e) => {
+  if (e.target === mailModal) closeMailModal();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && mailModal.classList.contains('active')) {
+    closeMailModal();
+  }
+});
+
+mailForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const payload = {
+    to:      mailToInput.value,
+    subject: document.getElementById('mailSubject').value.trim(),
+    body:    document.getElementById('mailBody').value.trim(),
+  };
+
+  if (!payload.subject || !payload.body) {
+    alert('Please fill subject and message.');
+    return;
+  }
+
+  try {
+    const response = await fetch('/sendmail', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json();
+
+    if (response.ok && result.status === 'success') {
+      alert('✅ Mail sent successfully!');
+      closeMailModal();
+    } else {
+      alert('❌ Error: ' + (result.message || 'Failed to send mail'));
+    }
+  } catch (err) {
+    console.error(err);
+    alert('❌ Network error.');
+  }
+});
+// Reset preview when modal closes (add inside closeModal function)
+function resetImagePreview() {
+  imagePreview.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>`;
+  imagePreview.classList.remove('has-image');
+}
+
+function closeModal() {
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+  form.reset();
+  resetImagePreview(); // <-- new
+}
+
+      // Form submission
+    form.addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  // Build FormData (not a plain object)
+  const formData = new FormData();
+  formData.append('name', document.getElementById('userName').value.trim());
+  formData.append('email', document.getElementById('userEmail').value.trim());
+  formData.append('age', document.getElementById('userAge').value);
+  formData.append('password', document.getElementById('userPassword').value);
+
+  const fileInput = document.getElementById('userImage');
+  if (fileInput.files[0]) {
+    formData.append('profileImage', fileInput.files[0]);
+  }
+
+  // Validation (read from FormData)
+  const name = formData.get('name');
+  const email = formData.get('email');
+  const age = parseInt(formData.get('age'), 10);
+  const password = formData.get('password');
+
+  if (!name || !email || !age || !password) {
+    alert('Please fill in all fields.');
+    return;
+  }
+  if (password.length < 8) {
+    alert('Password must be at least 8 characters.');
+    return;
+  }
+  if (age < 18 || age > 150) {
+    alert('Age must be between 18 and 150.');
+    return;
+  }
+
+  try {
+    const response = await fetch('/createuser', {
+      method: 'POST',
+      // ⚠️ NO headers here — the browser sets Content-Type with the boundary automatically
+      body: formData,
+    });
+
+    const result = await response.json();
+
+    if (response.ok && result.status === 'success') {
+      closeModal();
+      alert('✅ User created successfully!');
+      window.location.reload();
+    } else {
+      alert('❌ Error: ' + (result.message || 'Failed to create user'));
+    }
+  } catch (error) {
+    console.error('Error creating user:', error);
+    alert('❌ Network error. Please try again.');
+  }
+});
+
+
+    })();
+  </script>
+
+</body>
+</html>

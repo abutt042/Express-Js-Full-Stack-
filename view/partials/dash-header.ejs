@@ -1,0 +1,23 @@
+<header class="dash-header">
+  <div class="dash-header-inner">
+    <a href="/dashboard" class="brand">
+      <span class="brand-mark"></span>
+      <span class="brand-name">Nova Systems</span>
+    </a>
+
+    <nav class="dash-nav">
+      <a href="/dashboard" class="<%= typeof active !== 'undefined' && active === 'overview' ? 'active' : '' %>">Overview</a>
+      <a href="/dashboard/sensors" class="<%= typeof active !== 'undefined' && active === 'sensors' ? 'active' : '' %>">Sensors</a>
+      <a href="/users" class="<%= typeof active !== 'undefined' && active === 'users' ? 'active' : '' %>">Users</a>
+    </nav>
+
+    <details class="user-menu">
+      <summary class="user-menu-toggle">
+        <%= typeof username !== 'undefined' ? username : 'Account' %>
+      </summary>
+      <div class="user-menu-dropdown">
+        <a href="/logout">Sign out</a>
+      </div>
+    </details>
+  </div>
+</header>

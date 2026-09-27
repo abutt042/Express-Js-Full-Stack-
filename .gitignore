@@ -1,0 +1,16 @@
+# Dependency folders (Never upload node_modules!)
+node_modules/
+
+# Local Environment Secret Configuration Files
+.env
+.env.local
+.env.production
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS specific files
+.DS_Store
+Thumbs.db

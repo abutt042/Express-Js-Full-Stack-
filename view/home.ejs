@@ -1,0 +1,77 @@
+<%- include('partials/header') %>
+    <section class="hero">
+      <div class="hero-copy">
+        <h1>Systems that think ahead.</h1>
+        <p class="hero-sub">
+          Nova builds the sensing and control software that lets autonomous
+          machines make split-second decisions — in warehouses, on job
+          sites, and in the field.
+        </p>
+        <div class="hero-actions">
+          <a href="/contact" class="btn btn-primary">Talk to us</a>
+          <a href="/about" class="btn btn-ghost">How it works</a>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <svg viewBox="0 0 320 320" class="radar">
+          <circle cx="160" cy="160" r="140" class="radar-ring" />
+          <circle cx="160" cy="160" r="95" class="radar-ring" />
+          <circle cx="160" cy="160" r="50" class="radar-ring" />
+          <line x1="160" y1="20" x2="160" y2="300" class="radar-axis" />
+          <line x1="20" y1="160" x2="300" y2="160" class="radar-axis" />
+          <g class="radar-sweep">
+            <path d="M 160 160 L 160 20 A 140 140 0 0 1 236 55 Z" />
+          </g>
+          <circle cx="160" cy="160" r="4" class="radar-core" />
+        </svg>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="panel">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <span class="panel-tag">perception</span>
+        <h3>See the whole environment</h3>
+        <p>Fuse lidar, vision, and radar into one live model of the space around each machine, refreshed thirty times a second.</p>
+      </div>
+
+      <div class="panel">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <span class="panel-tag">control</span>
+        <h3>Act without hesitation</h3>
+        <p>Plan and execute motion in real time, with fail-safes that hold position the moment a signal drops.</p>
+      </div>
+
+      <div class="panel">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <span class="panel-tag">fleet</span>
+        <h3>Watch every unit</h3>
+        <p>Monitor a whole fleet from one dashboard, and push software updates without taking machines offline.</p>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="stat">
+        <span class="stat-value">40<span class="stat-unit">ms</span></span>
+        <span class="stat-label">average decision latency</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">12<span class="stat-unit">k+</span></span>
+        <span class="stat-label">units deployed in the field</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">99.9<span class="stat-unit">%</span></span>
+        <span class="stat-label">uptime across active fleets</span>
+      </div>
+    </section>
+
+    <section class="cta">
+      <h2>Ready to see it in your environment?</h2>
+      <p>We'll walk through your site, your fleet, and where Nova fits.</p>
+      <a href="/contact" class="btn btn-primary">Get in touch</a>
+    </section>
+<%- include('partials/footer') %>

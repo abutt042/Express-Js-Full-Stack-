@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sensors — Nova Systems</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <%- include('partials/dash-header') %>
+
+
+  <main class="dash-main">
+    <section class="page-header">
+      <span class="panel-tag">live feed</span>
+      <h1>Sensor feeds</h1>
+      <p class="page-sub">Demo readings from a handful of units. Nothing here is real telemetry.</p>
+    </section>
+
+    <section class="sensor-list">
+      <div class="panel">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <div class="sensor-row">
+          <div>
+            <span class="panel-tag">lidar</span>
+            <h3>Picker-07 — bay 12</h3>
+            <p>Point cloud healthy. 128k points / frame.</p>
+          </div>
+          <span class="sensor-value">ok</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <div class="sensor-row">
+          <div>
+            <span class="panel-tag">vision</span>
+            <h3>Hauler-04 — dock cam</h3>
+            <p>Camera 2 reporting 24 fps. Light level low.</p>
+          </div>
+          <span class="sensor-value warn">warn</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <div class="sensor-row">
+          <div>
+            <span class="panel-tag">imu</span>
+            <h3>Scout-11 — attitude</h3>
+            <p>Pitch 0.4°. Roll 0.1°. Drift within spec.</p>
+          </div>
+          <span class="sensor-value">ok</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>
