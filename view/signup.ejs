@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create account — Nova Systems</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <main class="auth-page">
+    <div class="auth-glow" aria-hidden="true"></div>
+
+    <div class="auth-panel">
+      <span class="corner tl"></span><span class="corner tr"></span>
+      <span class="corner bl"></span><span class="corner br"></span>
+
+      <a href="/" class="auth-brand">
+        <span class="brand-mark"></span>
+        <span>Nova Systems</span>
+      </a>
+
+      <span class="auth-tag">operator console</span>
+
+      <h1 class="auth-heading">Create your Nova account</h1>
+      <p class="auth-sub">Register to access your fleet dashboard and live sensor feeds.</p>
+
+      <form class="auth-form" id="signupForm">
+        <div class="form-group">
+    <label for="userImage">Profile Image</label>
+    <div class="image-upload-row">
+      <div class="image-preview" id="imagePreview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      </div>
+      <div class="image-input-wrap">
+        <input type="file" id="userImage" name="profileImage" accept="image/*">
+        <span class="helper-text">PNG, JPG or WEBP — max 5MB</span>
+      </div>
+    </div>
+  </div>
+        <div class="field">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required autocomplete="name">
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required autocomplete="email">
+        </div>
+ <div class="field">
+          <label for="age">Age</label>
+          <input type="number" id="Age" required >
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required minlength="8" autocomplete="new-password">
+        </div>
+
+        <div class="field">
+          <label for="confirmPassword">Confirm password</label>
+          <input type="password" id="confirmPassword" required minlength="8" autocomplete="new-password">
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" id="signupBtn">Create account</button>
+      </form>
+
+      <p class="auth-footer">Already have an account? <a href="/login">Sign in</a></p>
+    </div>
+  </main>
+
+ <script>
+  const signupForm = document.getElementById('signupForm');
+
+  signupForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const button = document.getElementById('signupBtn');
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (password !== confirmPassword) {
+      showMessage('Passwords do not match.');
+      return;
+    }
+
+    const userImageFile = document.getElementById('userImage').files[0];
+    if (userImageFile && userImageFile.size > 5 * 1024 * 1024) {
+      showMessage('Image must be smaller than 5MB.');
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = 'Creating account…';
+
+    const formData = new FormData();
+    formData.append('name', document.getElementById('name').value.trim());
+    console.log('Name:', document.getElementById('name').value.trim()); // Debugging line
+    console.log('Email:', document.getElementById('email').value.trim()); // Debugging line
+    console.log('Password:', password); 
+    formData.append('email', document.getElementById('email').value.trim());
+    formData.append('password', password);
+    formData.append('age', document.getElementById('Age').value.trim());
+    if (userImageFile) formData.append('profileImage', userImageFile);
+    try {
+      const response = await fetch('/signup', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.status === 'success') {
+        window.location.href = '/login?registered=1';
+      } else {
+        showMessage(result.message || 'Could not create your account.');
+      }
+    } catch (error) {
+      console.error(error);
+      showMessage('Network error. Please try again.');
+    } finally {
+      button.disabled = false;
+      button.textContent = 'Create account';
+    }
+  });
+
+  function showMessage(message) {
+    document.querySelectorAll('.toast').forEach((toast) => toast.remove());
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.setAttribute('role', 'alert');
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 4200);
+  }
+
+  const imageInput = document.getElementById('userImage');
+  const imagePreview = document.getElementById('imagePreview');
+
+  imageInput.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+      imagePreview.classList.add('has-image');
+    };
+    reader.readAsDataURL(file);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "target": "esnext",
+    "types": ["node"],
+    
+    /* FIX FOR MIXED JS/TS PROJECTS */
+    "allowJs": true,             // 👈 Allows TypeScript to import standard .js files
+    "checkJs": false,            // 👈 Prevents TS from complaining about errors inside your JS files
+
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "outDir": "dist",
+    "rootDir": "."
+  },
+  "include": [
+    "index.ts",
+    "**/*.js"                     // 👈 Includes your JavaScript routes and controllers
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

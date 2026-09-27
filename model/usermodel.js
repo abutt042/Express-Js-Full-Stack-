@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import { response } from 'express';
 
 // 1. Map Mongoose to your existing database fields
 const userSchema = new mongoose.Schema({
@@ -40,6 +41,19 @@ export async function create(userData) {
 }
 export async function findById(id) {
   return await User.findById(id);
+}
+
+export async function signup(userData) {
+
+ if(!userData.name || !userData.email || !userData.password) {
+    throw new Error('Name, email, and password are required fields.');
+  }
+  const email = userData.email;
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+return null; // User already exists}
+  }
+  return await User.create(userData);
 }
 
 export async function findByCredentials(email, password) {

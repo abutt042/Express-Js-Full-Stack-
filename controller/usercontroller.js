@@ -1,4 +1,4 @@
-import { findAll  , create, deleteById } from '../model/usermodel.js';
+import { findAll  , create, deleteById, signup } from '../model/usermodel.js';
 import emailTransporter from '../config/emailerconfig.js';
 export async function listUsers(req, res) {
   res.render('user', {
@@ -45,6 +45,24 @@ export async function createUser(req, res) {
   } catch (error) {
     res.status(500).json({ error: error.message });
   } }
+export async function signupuser(req, res) {
+  try {
+    const userData = req.body;
+   if (req.file) {
+      userData.profileImage = `/uploads/${req.file.filename}`;
+    }
+    
+    const user = await signup(userData );
+    if (!user) {
+      return res.status(400).json({ status: 'fail', message: 'User already exists' });
+    }
+
+    return res.status(201).json({ status: 'success', message: 'User signed up successfully.' });
+  } catch (error) {
+    console.error('Signup failed:', error);
+    return res.status(500).json({ status: 'fail', message: 'Could not create your account.' });
+  }
+}
 
   export async function deleteuser(req, res) {
 

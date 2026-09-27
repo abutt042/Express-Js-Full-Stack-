@@ -24,91 +24,83 @@
         <span>Nova Systems</span>
       </a>
 
-      <span class="auth-tag">operator console</span>
+    <span class="auth-tag">operator console</span>
 
-      <h1 class="auth-heading">Sign in to Nova</h1>
-      <p class="auth-sub">Access your fleet dashboard and live sensor feeds.</p>
+    <h1 class="auth-heading">Sign in to Nova</h1>
+    <p class="auth-sub">Access your fleet dashboard and live sensor feeds.</p>
 
     <form class="auth-form" id="loginForm">
-  <div class="field">
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" required autocomplete="email">
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required autocomplete="email">
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required autocomplete="current-password">
+      </div>
+
+      <div class="field-row">
+        <label class="checkbox-field">
+          <input type="checkbox" name="remember">
+          Remember me
+        </label>
+        <a href="/forgot-password" class="link-signal">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" id="loginBtn">Sign in</button>
+    </form>
+
+    <p class="auth-footer">New to Nova? <a href="/signup">Create an account</a></p>
   </div>
+</main>
 
-  <div class="field">
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password" required autocomplete="current-password">
-  </div>
+<script>
+  const loginForm = document.getElementById('loginForm');
 
-  <div class="field-row">
-    <label class="checkbox-field">
-      <input type="checkbox" name="remember">
-      Remember me
-    </label>
-    <a href="/forgot-password" class="link-signal">Forgot password?</a>
-  </div>
-
-  <button type="submit" class="btn btn-primary btn-block" id="loginBtn">Sign in</button>
-</form>
-
-<p class="auth-footer">New to Nova? <a href="/contact">Request access</a></p>
-      <p class="auth-footer">New to Nova? <a href="/contact">Request access</a></p>
-    </div>
-  </main>
-
-
-  <script>
-  const form = document.getElementById('loginForm');
-  const btn  = document.getElementById('loginBtn');
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const email    = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-
-    if (!email || !password) {
-      showError('Please fill in all fields.');
-      return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = 'Signing in…';
+  loginForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const button = document.getElementById('loginBtn');
+    button.disabled = true;
+    button.textContent = 'Signing in…';
 
     try {
       const response = await fetch('/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email: document.getElementById('email').value.trim(),
+          password: document.getElementById('password').value,
+        }),
       });
-
       const result = await response.json();
 
       if (response.ok && result.status === 'success') {
-        window.location.href = '/dashboard';   // ✅ client-side redirect
+        window.location.href = '/dashboard';
       } else {
-        showError(result.message || 'Invalid email or password');
+        showMessage(result.message || 'Invalid email or password');
       }
-    } catch (err) {
-      console.error(err);
-      showError('Network error. Please try again.');
+    } catch (error) {
+      console.error(error);
+      showMessage('Network error. Please try again.');
     } finally {
-      btn.disabled = false;
-      btn.textContent = 'Sign in';
+      button.disabled = false;
+      button.textContent = 'Sign in';
     }
   });
 
-  function showError(msg) {
-    // remove existing toast
-    document.querySelectorAll('.toast-error').forEach(t => t.remove());
+  const registered = new URLSearchParams(window.location.search).get('registered');
+  if (registered === '1') {
+    showMessage('Account created. Sign in to continue.');
+  }
 
+  function showMessage(message) {
     const toast = document.createElement('div');
-    toast.className = 'toast toast-error';
-    toast.setAttribute('role', 'alert');
-    toast.textContent = msg;
+    toast.className = 'toast';
+    toast.setAttribute('role', 'status');
+    toast.textContent = message;
     document.body.appendChild(toast);
-
-    setTimeout(() => toast.remove(), 4000);
+    setTimeout(() => toast.remove(), 4200);
   }
 </script>
 </body>
