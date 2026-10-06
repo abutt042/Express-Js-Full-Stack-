@@ -76,6 +76,8 @@
       const result = await response.json();
 
       if (response.ok && result.status === 'success') {
+        window.localStorage.setItem('userdata', JSON.stringify(result.user));
+        
         window.location.href = '/dashboard';
       } else {
         showMessage(result.message || 'Invalid email or password');

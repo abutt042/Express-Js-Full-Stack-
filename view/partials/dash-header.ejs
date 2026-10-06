@@ -10,8 +10,12 @@
       <a href="/dashboard/sensors" class="<%= typeof active !== 'undefined' && active === 'sensors' ? 'active' : '' %>">Sensors</a>
       <!-- <a href="/users" class="<%= typeof active !== 'undefined' && active === 'users' ? 'active' : '' %>">Users</a> -->
     </nav>
+<div class="avatar-cell" id="avatarCell">
+  <img class="avatar" id="avatarImg" src="" alt="" style="display:none;">
+  <span class="avatar-fallback" id="avatarFallback" style="display:none;">?</span>
 
     <details class="user-menu">
+      
       <summary class="user-menu-toggle">
         <%= typeof username !== 'undefined' ? username : 'Account' %>
       </summary>
@@ -19,5 +23,30 @@
         <a href="/logout">Sign out</a>
       </div>
     </details>
+    </div>
   </div>
 </header>
+<script>
+   (function () {
+    const user = JSON.parse(localStorage.getItem('userdata') || 'null');
+    if (!user) return;
+
+    const name = user.name || '';
+    const userpic = user.profileImage || null;
+
+    const img = document.getElementById('avatarImg');
+    const fallback = document.getElementById('avatarFallback');
+    const nameEl = document.getElementById('avatarName');
+
+    if (userpic) {
+      img.src = userpic;
+      img.alt = name;
+      img.style.display = 'inline-block';
+    } else {
+      fallback.textContent = name ? name.charAt(0).toUpperCase() : '?';
+      fallback.style.display = 'inline-block';
+    }
+
+    nameEl.textContent = name;
+  })();
+</script>

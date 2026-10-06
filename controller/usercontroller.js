@@ -1,4 +1,4 @@
-import { findAll  , create, deleteById, signup } from '../model/usermodel.js';
+import { findAll  , create, deleteById, signup, findById } from '../model/usermodel.js';
 import emailTransporter from '../config/emailerconfig.js';
 export async function listUsers(req, res) {
   res.render('user', {
@@ -77,3 +77,14 @@ export async function signupuser(req, res) {
 
 
   }
+  export async function getUserById(req, res) {
+  try {
+    const userId = req.params.id;
+    const user = await findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(user); 
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }}

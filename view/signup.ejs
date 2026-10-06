@@ -99,10 +99,7 @@
     button.textContent = 'Creating account…';
 
     const formData = new FormData();
-    formData.append('name', document.getElementById('name').value.trim());
-    console.log('Name:', document.getElementById('name').value.trim()); // Debugging line
-    console.log('Email:', document.getElementById('email').value.trim()); // Debugging line
-    console.log('Password:', password); 
+    formData.append('name', document.getElementById('name').value.trim()); 
     formData.append('email', document.getElementById('email').value.trim());
     formData.append('password', password);
     formData.append('age', document.getElementById('Age').value.trim());

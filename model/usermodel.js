@@ -32,14 +32,17 @@ export async function findAll(excludedUserId) {
 
 
 export async function create(userData) {
-  console.log('Creating user with data:', userData); // Debugging line
  if(!userData.name || !userData.email || !userData.password) {
     throw new Error('Name, email, and password are required fields.');
   }
   return await User.create(userData);
 }
 export async function findById(id) {
-  return await User.findById(id);
+  const result = await pool.query(
+    'SELECT id, name, email, age, profileimage FROM users WHERE id = $1',
+    [id]
+  );
+  return result.rows[0] ?? null;
 }
 
 export async function signup(userData) {
@@ -86,10 +89,9 @@ export async function findByCredentials(email, password) {
     return null;
   }
  
-console.log('User found:', user.rows[0]); // Debugging line
   return user
 
 }
 export async function deleteById(id) {
-  return await User.findByIdAndDelete(id);
+  return await pool.query('DELETE FROM users WHERE id = $1', [id]);
 }
